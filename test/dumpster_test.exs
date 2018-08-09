@@ -7,7 +7,14 @@ defmodule DumpsterTest do
 
   describe "read and write" do
     setup do
-      {:ok, pid} = Dumpster.start_link(name: :dumpster, path: "/tmp", file: "dumpster_dump", compression: false)
+      {:ok, pid} =
+        Dumpster.start_link(
+          name: :dumpster,
+          path: "/tmp",
+          file: "dumpster_dump",
+          compression: false
+        )
+
       ^pid = GenServer.whereis(:dumpster)
 
       {:ok, pid} =
@@ -17,12 +24,13 @@ defmodule DumpsterTest do
           file: "dumpster_dump",
           compression: true
         )
+
       ^pid = GenServer.whereis(:dumpster_comp)
 
-      on_exit fn ->
+      on_exit(fn ->
         File.rm("/tmp/dumpster_dump.bin")
         File.rm("/tmp/dumpster_dump.bin.gz")
-      end
+      end)
 
       {:ok,
        dumpster: :dumpster,
@@ -33,14 +41,16 @@ defmodule DumpsterTest do
 
     test "write and read uncompressed", %{dumpster: dumpster, path: path} do
       payload = random_bytes(128)
-      Dumpster.dump(dumpster, payload)
-      assert {:ok, ^payload} = Dumpster.Retrieve.from_file(path)
+      Dumpster.dump(payload, dumpster)
+      Process.sleep(20)
+      assert {:ok, ^payload} = Dumpster.retain(path)
     end
 
     test "write and read compressed", %{compressed: dumpster, path_comp: path} do
       payload = random_bytes(128)
-      Dumpster.dump(dumpster, payload)
-      assert {:ok, ^payload} = Dumpster.Retrieve.from_file(path)
+      Dumpster.dump(payload, dumpster)
+      Process.sleep(20)
+      assert {:ok, ^payload} = Dumpster.retain(path)
     end
   end
 end

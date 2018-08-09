@@ -4,7 +4,7 @@ defmodule Dumpster.Service do
   require Logger
 
   alias Dumpster.Utils
-  alias Dumpster.Utils.Settings
+  alias Dumpster.Settings
 
   @moduledoc """
   Documentation for Dumpster.
@@ -16,7 +16,7 @@ defmodule Dumpster.Service do
 
   def handle_cast({:dump, payload}, state) when is_binary(payload) do
     with path <- Path.join(state.path, file_name(state)),
-         :ok <- File.write(path, payload, state.mode) do
+         :ok <- File.write(path, Utils.frame(payload), state.mode) do
       Logger.info("Dumping into: #{path}")
       {:noreply, state}
     else
