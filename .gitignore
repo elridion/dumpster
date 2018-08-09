@@ -23,5 +23,5 @@ erl_crash.dump
 dumpster-*.tar
 .elixir_ls
 
-.bin
-.bin.gz
+*.bin
+*.bin.gz

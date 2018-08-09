@@ -1,10 +1,10 @@
-defmodule Dumpster.Settings do
+defmodule Dumpster.Service.Settings do
   defstruct [
     :path,
     :compression,
     :mode,
-    # :strategy
-    :file
+    :file,
+    :format
   ]
 
   def from_config(args \\ []) do
@@ -16,8 +16,9 @@ defmodule Dumpster.Settings do
     %__MODULE__{
       path: Path.expand(args[:path] || "."),
       compression: args[:compression] || false,
-      mode: [:binary] ++ if(args[:compression], do: [:compressed], else: []),
-      file: args[:file] || nil
+      mode: [:write] ++ if(args[:compression], do: [:compressed], else: []),
+      file: {nil, nil},
+      format: args[:format] || "dump_<%= @unix %>"
     }
     |> validate
   end
@@ -29,9 +30,6 @@ defmodule Dumpster.Settings do
 
       not is_boolean(settings.compression) ->
         {:error, "compression has to be boolean"}
-
-      not is_bitstring(settings.file) and not is_nil(settings.file) ->
-        {:error, "filename has to be a string"}
 
       true ->
         {:ok, settings}

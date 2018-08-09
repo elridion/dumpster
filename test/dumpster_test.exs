@@ -11,7 +11,7 @@ defmodule DumpsterTest do
         Dumpster.start_link(
           name: :dumpster,
           path: "/tmp",
-          file: "dumpster_dump",
+          format: "dumpster_dump",
           compression: false
         )
 
@@ -21,7 +21,7 @@ defmodule DumpsterTest do
         Dumpster.start_link(
           name: :dumpster_comp,
           path: "/tmp",
-          file: "dumpster_dump",
+          format: "dumpster_dump",
           compression: true
         )
 
@@ -42,6 +42,7 @@ defmodule DumpsterTest do
     test "write and read uncompressed", %{dumpster: dumpster, path: path} do
       payload = random_bytes(128)
       Dumpster.dump(payload, dumpster)
+      GenServer.stop(dumpster)
       Process.sleep(20)
       assert {:ok, ^payload} = Dumpster.retain(path)
     end
@@ -49,6 +50,7 @@ defmodule DumpsterTest do
     test "write and read compressed", %{compressed: dumpster, path_comp: path} do
       payload = random_bytes(128)
       Dumpster.dump(payload, dumpster)
+      GenServer.stop(dumpster)
       Process.sleep(20)
       assert {:ok, ^payload} = Dumpster.retain(path)
     end
