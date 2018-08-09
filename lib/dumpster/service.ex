@@ -43,7 +43,7 @@ defmodule Dumpster.Service do
       {_file, ^path} ->
         {:ok, file_desc}
       {file, _path} ->
-        File.close(file)
+        :ok = File.close(file)
         open(path, mode)
     end
   end

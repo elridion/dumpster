@@ -1,10 +1,14 @@
 defmodule Dumpster.Utils do
   def frame(payload) when is_binary(payload) do
-    <<byte_size(payload)::unsigned-integer, payload::binary>>
+    <<byte_size(payload)::unsigned-integer-32, payload::binary>>
   end
 
-  def unframe(<<size::unsigned-integer, payload::bytes-size(size), rest::binary>>) do
-    {payload, rest}
+  def unframe(<<size::unsigned-integer-32, payload::bytes-size(size), "">>) do
+    [payload]
+  end
+
+  def unframe(<<size::unsigned-integer-32, payload::bytes-size(size), rest::binary>>) do
+    [payload | unframe(rest)]
   end
 
   def translate_error(error) do

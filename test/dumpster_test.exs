@@ -40,19 +40,39 @@ defmodule DumpsterTest do
     end
 
     test "write and read uncompressed", %{dumpster: dumpster, path: path} do
-      payload = random_bytes(128)
+      payload = random_bytes(500)
       Dumpster.dump(payload, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, ^payload} = Dumpster.retain(path)
+      assert {:ok, [^payload]} = Dumpster.retain(path)
+    end
+
+    test "write and read multible uncompressed", %{dumpster: dumpster, path: path} do
+      a = random_bytes(500)
+      b = random_bytes(500)
+      Dumpster.dump(a, dumpster)
+      Dumpster.dump(b, dumpster)
+      GenServer.stop(dumpster)
+      Process.sleep(20)
+      assert {:ok, [^a, ^b]} = Dumpster.retain(path)
     end
 
     test "write and read compressed", %{compressed: dumpster, path_comp: path} do
-      payload = random_bytes(128)
+      payload = random_bytes(500)
       Dumpster.dump(payload, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, ^payload} = Dumpster.retain(path)
+      assert {:ok, [^payload]} = Dumpster.retain(path)
+    end
+
+    test "write and read multible compressed", %{compressed: dumpster, path_comp: path} do
+      a = random_bytes(500)
+      b = random_bytes(500)
+      Dumpster.dump(a, dumpster)
+      Dumpster.dump(b, dumpster)
+      GenServer.stop(dumpster)
+      Process.sleep(20)
+      assert {:ok, [^a, ^b]} = Dumpster.retain(path)
     end
   end
 end
