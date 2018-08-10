@@ -16,7 +16,7 @@ defmodule Dumpster do
   def child_spec(opts) do
     %{
       id: opts[:name] || __MODULE__,
-      start: {__MODULE__, :start_link, opts},
+      start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: opts[:restart] || :permanent,
       shutdown: opts[:shutdown] || 500
