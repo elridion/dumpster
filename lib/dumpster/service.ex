@@ -34,9 +34,9 @@ defmodule Dumpster.Service do
          mode: mode,
          file: file_desc,
          format: format,
-         compression: compression
+         compressed: compressed
        }) do
-    path = Path.join(path, filename(format, compression))
+    path = Path.join(path, filename(format, compressed))
 
     case file_desc do
       {nil, _} ->
@@ -59,8 +59,8 @@ defmodule Dumpster.Service do
     end
   end
 
-  defp filename(format, compression) do
-    EEx.eval_string(format, assigns: assigns()) <> ".bin" <> if compression, do: ".gz", else: ""
+  defp filename(format, compressed) do
+    EEx.eval_string(format, assigns: assigns()) <> ".bin" <> if compressed, do: ".gz", else: ""
   end
 
   defp assigns(args \\ []) do

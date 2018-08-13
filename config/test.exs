@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :dumpster,
-  compression: true
+  compressed: true
 
 config :logger,
   level: :error

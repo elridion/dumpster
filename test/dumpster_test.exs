@@ -12,7 +12,7 @@ defmodule DumpsterTest do
           name: :dumpster,
           path: "/tmp",
           format: "dumpster_dump",
-          compression: false
+          compressed: false
         )
 
       ^pid = GenServer.whereis(:dumpster)
@@ -22,7 +22,7 @@ defmodule DumpsterTest do
           name: :dumpster_comp,
           path: "/tmp",
           format: "dumpster_dump",
-          compression: true
+          compressed: true
         )
 
       ^pid = GenServer.whereis(:dumpster_comp)

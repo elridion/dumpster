@@ -1,7 +1,7 @@
 defmodule Dumpster.Service.Settings do
   defstruct [
     :path,
-    :compression,
+    :compressed,
     :mode,
     :file,
     :format
@@ -15,8 +15,8 @@ defmodule Dumpster.Service.Settings do
   def configure(args) do
     %__MODULE__{
       path: Path.expand(args[:path] || "."),
-      compression: args[:compression] || false,
-      mode: [:write] ++ if(args[:compression], do: [:compressed], else: []),
+      compressed: args[:compressed] || false,
+      mode: [:write] ++ if(args[:compressed], do: [:compressed], else: []),
       file: {nil, nil},
       format: args[:format] || "dump_<%= @unix %>"
     }
@@ -28,8 +28,8 @@ defmodule Dumpster.Service.Settings do
       not File.dir?(settings.path) ->
         {:error, "invalid path"}
 
-      not is_boolean(settings.compression) ->
-        {:error, "compression has to be boolean"}
+      not is_boolean(settings.compressed) ->
+        {:error, "compressed has to be boolean"}
 
       true ->
         {:ok, settings}
