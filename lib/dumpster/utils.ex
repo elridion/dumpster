@@ -35,4 +35,10 @@ defmodule Dumpster.Utils do
         error
     end
   end
+
+  def zero_pad(number, count \\ 2, padding \\ "0") when is_integer(number) do
+    number
+    |> Integer.to_string
+    |> String.pad_leading(count, padding)
+  end
 end

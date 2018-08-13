@@ -64,16 +64,17 @@ defmodule Dumpster.Service do
   end
 
   defp assigns(args \\ []) do
+    import Utils, only: [zero_pad: 1]
     {{year, month, day}, {hour, minute, second}} = :calendar.local_time()
 
     [
       unix: DateTime.utc_now() |> DateTime.to_unix(),
       year: year,
-      month: month,
-      day: day,
-      hour: hour,
-      minute: minute,
-      second: second
+      month: zero_pad(month),
+      day: zero_pad(day),
+      hour: zero_pad(hour),
+      minute: zero_pad(minute),
+      second: zero_pad(second)
     ]
     |> Keyword.merge(args)
   end
