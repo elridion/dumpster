@@ -15,7 +15,7 @@ defmodule Dumpster do
 
   def child_spec(opts) do
     %{
-      id: opts[:name] || __MODULE__,
+      id: opts[:id] || opts[:name] || __MODULE__,
       start: {__MODULE__, :start_link, [opts]},
       type: :worker,
       restart: opts[:restart] || :permanent,
@@ -26,6 +26,10 @@ defmodule Dumpster do
   def dump(payload, target \\ __MODULE__) when is_binary(payload) do
     GenServer.cast(target, {:dump, payload})
     payload
+  rescue
+    _err ->
+      Logger.error("dumping payload failed")
+      payload
   end
 
   def retain(path) do

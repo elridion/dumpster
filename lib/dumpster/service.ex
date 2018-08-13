@@ -37,11 +37,14 @@ defmodule Dumpster.Service do
          compression: compression
        }) do
     path = Path.join(path, filename(format, compression))
+
     case file_desc do
       {nil, _} ->
         open(path, mode)
+
       {_file, ^path} ->
         {:ok, file_desc}
+
       {file, _path} ->
         :ok = File.close(file)
         open(path, mode)
@@ -57,12 +60,20 @@ defmodule Dumpster.Service do
   end
 
   defp filename(format, compression) do
-    EEx.eval_string(format, assigns: assigns()) <> (".bin" <> if compression, do: ".gz", else: "")
+    EEx.eval_string(format, assigns: assigns()) <> ".bin" <> if compression, do: ".gz", else: ""
   end
 
   defp assigns(args \\ []) do
+    {{year, month, day}, {hour, minute, second}} = :calendar.local_time()
+
     [
-      unix: DateTime.utc_now() |> DateTime.to_unix()
+      unix: DateTime.utc_now() |> DateTime.to_unix(),
+      year: year,
+      month: month,
+      day: day,
+      hour: hour,
+      minute: minute,
+      second: second
     ]
     |> Keyword.merge(args)
   end
