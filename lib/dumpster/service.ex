@@ -20,7 +20,7 @@ defmodule Dumpster.Service do
 
   def handle_cast({:dump, payload}, state) when is_binary(payload) do
     with {:ok, {file, path}} <- file(state) do
-      Logger.info("Dumping into: #{path}")
+      # Logger.info("Dumping into: #{path}")
       IO.binwrite(file, Utils.frame(payload))
       {:noreply, %Settings{state | file: {file, path}}}
     else

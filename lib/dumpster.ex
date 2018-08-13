@@ -36,7 +36,7 @@ defmodule Dumpster do
     with {:ok, file} <- File.open(expand(path), derive_mode(path)),
          <<payload::binary>> <- IO.binread(file, :all),
          payload <- Utils.unframe(payload) do
-      Logger.info("Reading from: #{path}")
+      # Logger.info("Reading from: #{path}")
 
       {:ok, payload}
     else
