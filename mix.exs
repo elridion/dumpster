@@ -4,7 +4,7 @@ defmodule Dumpster.MixProject do
   def project do
     [
       app: :dumpster,
-      version: "0.2.2",
+      version: "1.0.0",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,

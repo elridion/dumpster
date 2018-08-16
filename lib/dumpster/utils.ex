@@ -1,16 +1,44 @@
 defmodule Dumpster.Utils do
-  def frame(payload) when is_binary(payload) do
+  require Logger
+
+  @doc ~S"""
+  Encodes the given binary and (unix-)timestamp into a chunk.
+  """
+  def encode(timestamp, payload) when is_binary(payload) and is_integer(timestamp) do
+    <<timestamp::unsigned-integer-32, payload::binary>>
+    |> frame()
+  end
+
+  @doc ~S"""
+  Tries to decode all chunks in the given binary.
+  """
+  def decode(payload) when is_binary(payload) do
+    unframe(payload)
+    |> Enum.map(fn <<timestamp::unsigned-integer-32, payload::binary>> ->
+      {timestamp, payload}
+    end)
+  end
+
+  defp frame(payload) do
     <<byte_size(payload)::unsigned-integer-32, payload::binary>>
   end
 
-  def unframe(<<size::unsigned-integer-32, payload::bytes-size(size), "">>) do
-    [payload]
+  defp unframe(<<_::size(0)>>) do
+    []
   end
 
-  def unframe(<<size::unsigned-integer-32, payload::bytes-size(size), rest::binary>>) do
+  defp unframe(<<size::unsigned-integer-32, payload::bytes-size(size), rest::binary>>) do
     [payload | unframe(rest)]
   end
 
+  defp unframe(_) do
+    Logger.error("Part of the Frame payload is missing")
+    []
+  end
+
+  @doc """
+  Maps the Elixir File error reasons onto their respective reasons
+  """
   def translate_error(error) do
     case error do
       :enoent ->
@@ -38,7 +66,7 @@ defmodule Dumpster.Utils do
 
   def zero_pad(number, count \\ 2, padding \\ "0") when is_integer(number) do
     number
-    |> Integer.to_string
+    |> Integer.to_string()
     |> String.pad_leading(count, padding)
   end
 end

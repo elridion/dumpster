@@ -1,9 +1,9 @@
 defmodule DumpsterTest do
   use ExUnit.Case
-
   import Dumpster.Test
-
   alias Dumpster.Utils.Settings
+
+  doctest Dumpster
 
   describe "read and write" do
     setup do
@@ -44,7 +44,7 @@ defmodule DumpsterTest do
       Dumpster.dump(payload, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, [^payload]} = Dumpster.retain(path)
+      assert {:ok, [{_, ^payload}]} = Dumpster.retain(path)
     end
 
     test "write and read multible uncompressed", %{dumpster: dumpster, path: path} do
@@ -54,7 +54,7 @@ defmodule DumpsterTest do
       Dumpster.dump(b, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, [^a, ^b]} = Dumpster.retain(path)
+      assert {:ok, [{_, ^a}, {_, ^b}]} = Dumpster.retain(path)
     end
 
     test "write and read compressed", %{compressed: dumpster, path_comp: path} do
@@ -62,7 +62,7 @@ defmodule DumpsterTest do
       Dumpster.dump(payload, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, [^payload]} = Dumpster.retain(path)
+      assert {:ok, [{_, ^payload}]} = Dumpster.retain(path)
     end
 
     test "write and read multible compressed", %{compressed: dumpster, path_comp: path} do
@@ -72,7 +72,7 @@ defmodule DumpsterTest do
       Dumpster.dump(b, dumpster)
       GenServer.stop(dumpster)
       Process.sleep(20)
-      assert {:ok, [^a, ^b]} = Dumpster.retain(path)
+      assert {:ok, [{_, ^a}, {_, ^b}]} = Dumpster.retain(path)
     end
   end
 end
