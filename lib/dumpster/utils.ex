@@ -19,19 +19,19 @@ defmodule Dumpster.Utils do
     end)
   end
 
-  defp frame(payload) do
+  def frame(payload) do
     <<byte_size(payload)::unsigned-integer-32, payload::binary>>
   end
 
-  defp unframe(<<_::size(0)>>) do
+  def unframe(<<_::size(0)>>) do
     []
   end
 
-  defp unframe(<<size::unsigned-integer-32, payload::bytes-size(size), rest::binary>>) do
+  def unframe(<<size::unsigned-integer-32, payload::bytes-size(size), rest::binary>>) do
     [payload | unframe(rest)]
   end
 
-  defp unframe(_) do
+  def unframe(_) do
     Logger.error("Part of the Frame payload is missing")
     []
   end

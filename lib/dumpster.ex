@@ -100,6 +100,21 @@ defmodule Dumpster do
     end
   end
 
+  def legacy_retain(path) do
+    with {:ok, file} <- File.open(expand(path), derive_mode(path)),
+         <<payload::binary>> <- IO.binread(file, :all),
+         payload <- Utils.unframe(payload) do
+      File.close(file)
+      {:ok, payload}
+    else
+      :eof ->
+        {:error, "encountered end of file"}
+
+      {:error, reason} ->
+        {:error, Utils.translate_error(reason)}
+    end
+  end
+
   defp derive_mode(path) do
     if String.ends_with?(path, ".gz") do
       [:read, :compressed]
